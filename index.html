@@ -65,8 +65,14 @@
     height: 1300px;
     transform-origin: 0 0;
     will-change: transform;
-    background: url("Screenshot 2026-07-29 002949.png") center / cover no-repeat;
     touch-action: none;
+  }
+  .canvas-bg{
+    position: absolute; inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: url("Wall-Art-Graffiti-Background.jpg") center / cover no-repeat;
+    filter: grayscale(1);
   }
 
   .lines-svg{
@@ -209,7 +215,7 @@
     position: fixed; inset: 0; z-index: 100;
     display: flex; align-items: center; justify-content: center;
     padding: 4vh 4vw;
-    background: var(--paper);
+    background: #E8E8E8;
     opacity: 0; pointer-events: none;
     transition: opacity 0.25s ease;
   }
@@ -217,8 +223,8 @@
     content:"";
     position: absolute; inset:0; z-index:0; pointer-events:none;
     background-image:
-      repeating-linear-gradient(112deg, var(--ink) 0 1px, transparent 1px 8px),
-      repeating-linear-gradient(24deg, var(--ink) 0 1px, transparent 1px 13px);
+      repeating-linear-gradient(112deg, #111 0 1px, transparent 1px 8px),
+      repeating-linear-gradient(24deg, #111 0 1px, transparent 1px 13px);
     opacity: 0.05;
   }
   .reader.open{ opacity: 1; pointer-events: auto; }
@@ -280,6 +286,21 @@
     text-transform: lowercase; opacity: 0.6; margin-bottom: 1.2rem !important;
   }
 
+  .hobby-tabs{
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    margin-bottom: 1.4rem;
+  }
+  .hobby-tab{
+    all: unset; box-sizing: border-box; cursor: pointer;
+    padding: 0.4rem 0.85rem;
+    border: 1.5px solid var(--ink); color: var(--ink);
+    font-family: 'Oswald', sans-serif; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: lowercase;
+  }
+  .hobby-tab:hover{ border-color: var(--red); color: var(--red); }
+  .hobby-tab.active{ background: var(--ink); color: #fff; border-color: var(--ink); }
+  .hobby-tab:focus-visible{ outline: 2px solid var(--red); outline-offset: 2px; }
+  .hobby-empty{ opacity: 0.6; font-style: italic; }
+
   /* ============ MOBILE PANNING ============ */
   @media (max-width: 900px){
     body{ overflow: hidden; }
@@ -330,6 +351,7 @@
 
 <div class="stage" id="stage">
   <div class="canvas" id="canvas">
+    <div class="canvas-bg" aria-hidden="true"></div>
 
     <svg class="lines-svg" id="linesSvg" width="2000" height="1300"></svg>
 
@@ -341,7 +363,7 @@
       3) Change the text inside <span>...</span> to the message you want.
       4) Change the label text inside <div class="label">...</div> to the pin name.
 
-      If you want another clickable info card like cv or music:
+      If you want another clickable info card like resume or music:
       A) Copy one of the <a class="pin-card photo-card" ...> blocks.
       B) Set href="#your-id" and data-nav="your-id".
       C) Add a new entry in the SECTIONS object in the script with the same key.
@@ -359,7 +381,7 @@
 
     <div class="pin-card card-poster" tabindex="-1" style="left:1030px; top:740px; width:210px; transform:rotate(-8deg);">
       <div class="pin"></div>
-      <div class="frame"><img src="chopin ballade.webp" alt="Chopin Ballade Op.23"></div>
+      <div class="frame"><img src="scriabin op 8 no 12.png" alt="Scriabin Etude Op.8 No.12"></div>
       <div class="label">piano piece i'm currently learning</div>
       <div class="hover-box">"a spring without you is coming" - arima kousei</div>
     </div>
@@ -370,7 +392,7 @@
     </div>
 
      <div class="pin-card card-poster" tabindex="-1" style="left:1280px; top:540px; width:190px; transform:rotate(-1deg);">
-      <div class="pin"></div><div class="frame"><img src="book cover.png" alt="The Art and Craft of Problem Solving"></div><div class="label">currently reading</div>
+      <div class="pin"></div><div class="frame"><img src="putnam and beyond.jpg" alt="Putnam and Beyond"></div><div class="label">currently reading</div>
       <div class="hover-box">future putnam winner in the making?</div>
     </div>
 
@@ -385,10 +407,10 @@
       <h1>noah lianez</h1>
     </div>
 
-    <a class="pin-card photo-card" href="#cv" data-nav="cv" tabindex="0" style="left:800px; top:830px; transform:rotate(4deg);">
+    <a class="pin-card photo-card" href="#resume" data-nav="resume" tabindex="0" style="left:800px; top:830px; transform:rotate(4deg);">
       <div class="pin"></div>
       <div class="swatch">01</div>
-      <div class="label">cv</div>
+      <div class="label">resume</div>
     </a>
 
     <a class="pin-card photo-card" href="#blog" data-nav="blog" tabindex="0" style="left:1260px; top:320px; transform:rotate(3deg);">
@@ -403,10 +425,10 @@
       <div class="label">music</div>
     </a>
 
-    <a class="pin-card photo-card" href="#pickleball" data-nav="pickleball" tabindex="0" style="left:390px; top:550px; transform:rotate(6deg);">
+    <a class="pin-card photo-card" href="#hobbies" data-nav="hobbies" tabindex="0" style="left:390px; top:550px; transform:rotate(6deg);">
       <div class="pin"></div>
       <div class="swatch">04</div>
-      <div class="label">pickleball</div>
+      <div class="label">hobbies</div>
     </a>
 
     <a class="pin-card photo-card" href="#about" data-nav="about" tabindex="0" style="left:730px; top:210px; transform:rotate(1deg);">
@@ -422,17 +444,17 @@
 <div class="reader" id="reader">
   <button class="reader-close" id="readerClose" aria-label="Close">close ✕</button>
   <div class="reader-paper" id="readerPaper">
-    <h2 id="readerTitle">cv</h2>
+    <h2 id="readerTitle">resume</h2>
     <div id="readerBody"></div>
   </div>
 </div>
 
 <script>
   const SECTIONS = {
-    cv: {
-      title: 'cv',
+    resume: {
+      title: 'resume',
       body: [
-        "this is a work in progress, will update with my completed cv soon."
+        "this is a work in progress, will update with my completed resume soon."
       ]
     },
     music: {
@@ -441,14 +463,6 @@
         "i've yet to create a music instagram or release my music on any streaming platforms, but i do have a few projects that i've been working on in my free time. i hope to release something soon, so check back later!",
         "i'm also thinking about attaching my spotify to this website so my playlists are publicly accessible, so keep an eye out for that as well.",
         "- noah, 7/29/2026."
-      ]
-    },
-    pickleball: {
-      title: 'pickleball',
-      body: [
-        "a goal of mine is to represent uflorida on their travel pickleball team! i'll be updating this page with how that's going.",
-        "you can see my very, very short tournament history on my <a href=\"https://dashboard.dupr.com/dashboard/player/5932982231\" target=\"_blank\" rel=\"noopener\">DUPR page</a>. note that my DUPR rating is definitely inaccurate and will change as i play more.",
-        "as for my equipment, i use a vatic pro v7 paddle. to my knowledge, it's out of production, but it's lasted me a while and i love it."
       ]
     },
     about: {
@@ -472,10 +486,49 @@
 
   const BLOG_ENTRIES = [
 
+    { id: 'e2', title: 'the first two weeks of college (actually) matter', date: '11/7/2026',
+      body: [
+        "before i begin: this post is long overdue, so i sincerely apologize to the 2 people who were actually checking my website waiting for this.",
+        "if you know me personally, you likely know that i’ve moved multiple times throughout my childhood. i’m entirely too familiar with the grueling process of restarting socially from scratch.",
+        "when moving to virginia right before 7th grade in the absolute thick of COVID, i recognized immediately that i was socially miles behind. not only were the vast majority of my peers already situated comfortably within their lifelong childhood friend groups, but the virus essentially blocked me from having a single organic opportunity to socialize for over a year.",
+        "the concept of going to a college where absolutely nobody from my high school (or county, to my knowledge) would be joining me was fascinating, but also equally terrifying, largely because i feared being left socially stranded, just like before. in an anxious attempt to outrun that exact scenario, i forced myself to socialize harder and more intentionally than i ever have during the first two weeks of college, and i can affirm without a single doubt that it paid off.",
+        "first and foremost, everyone is floating in the exact same boat, which makes people infinitely more receptive to a random introduction. i did everything i possibly could to squeeze every ounce of value out of that brief window, setting up plans with people i barely knew to fill my days from sunrise until 5 AM on some nights. all i did was talk, talk, talk, because for the first time, it actually felt like the people i was talking to were just as desperate and excited to forge a brand new friendship.",
+        "second of all, it’s extremely important that you protect your authentic self around the people you meet, as that filtering process fundamentally dictates who you’re truly meant to surround yourself with. over time, you’ll start to notice that some acquaintances quietly fade away while others stick around. the chaotic process of weeding out hundreds of faces down to a tight-knit circle occurs naturally, provided you do everything in your power to just be you. those who stay do so because they appreciate you for your unfiltered, genuine self.",
+        "i’m happy to say i’ve found a profound sense of belonging with the people i keep in my corner, and that outcome simply wouldn’t have been possible if i hadn't poured genuine effort into showing up as my true self. looking back, i couldn’t imagine how difficult it is trying to navigate social isolation after the first month of college. it’s absolutely still possible to find your “people” later on, but it is undeniably much, much harder.",
+        "a lesson to anyone who’s yet to go to college: do everything within your power to put yourself out there; you’ll thank yourself."
+      ] },
+
     { id: 'e1', title: 'first post', date: '7/29/2026',
       body: ["hello guys",
              "this one isn't really a real blog post, but it's here for me to build the layout of this page. i'm excited to write about random things. don't know what that will be yet, but we'll see!",
             "check back later for a real post! bye"] }
+  ];
+
+  /* ===== HOBBIES =====
+     each hobby is its own tab + mini blog.
+     - add a hobby: copy one { key: ..., name: ..., posts: [] } block.
+       key = short id with no spaces (used in the url), name = tab text.
+     - add a post: put { id: 'p1', title: '...', date: 'm/d/yyyy', body: ["paragraph", "paragraph"] }
+       inside that hobby's posts: [ ... ]. ids only need to be unique within the hobby.
+       newest post first. */
+  const HOBBIES = [
+    { key: 'pickleball', name: 'pickleball', posts: [
+      { id: 'p1', title: 'a brief update on my pickleball journey', date: '11/7/2026',
+        body: [
+          "this semester has been honestly disappointing for pickleball: i have been too busy with other commitments to carve out the time i wish i could for the sport i love. i began the semester strong, practicing 3-4x a week, improving rapidly. as soon as classes and clubs picked up, however, i began to see the court less. especially after getting COVID and eventually bronchitis my momentum completely stopped. i will in fact be adding pickleball to my already long list of new year’s resolutions. oh well.",
+          "tldr: it’s not over, just (slightly) delayed. peace!"
+        ] }
+    ] },
+    { key: 'surfing', name: 'surfing', posts: [] },
+    { key: 'speedcubing', name: 'speedcubing', posts: [
+      { id: 'p1', title: 'a return to cubing!', date: '11/7/2026',
+        body: [
+          "since breaking my old GAN 356 air rubik’s cube at 12, i’ve retired from the hobby, but it hasn’t permanently left my mind. if i’m at a party and someone happens to have a cube, i’ll still know enough algorithms to solve it. occasionally, after scrolling far enough on instagram, i’ll see a reel or two about some new record yiheng wang set and get a bit of motivation to pick the hobby back up again.",
+          "after a handful of conversations with a friend who happened to have a spare cube, i’ve begun (attempting) to regain my old skill. i’ve currently relearned very basic CFOP and memorized all algorithms for 2-look OLL and PLL. my biggest weakness, right now, is my extremely slow F2L. i plan on dedicating a couple of hours throughout the next few weeks to figuring out pseudoslotting and other advanced F2L techniques.",
+          "after timing 50 solves this past week, my current personal best is a whopping 22.60 and i average roughly 36.73 seconds. i have quite a lot of practicing to get to where i was when i was younger, but i’m sure with time i’ll be able to reach that point and even pass it.",
+          "tldr: i’m unretired and trying to improve"
+        ] }
+    ] }
   ];
 
   const reader = document.getElementById('reader');
@@ -488,11 +541,11 @@
   function renderSection(key){
     const s = SECTIONS[key];
     readerTitle.textContent = s.title;
-    if (key === 'cv'){
+    if (key === 'resume'){
       readerBody.innerHTML = `
         <div class="pdf-shell">
-          <a class="pdf-link" href="cv_7-30-2026.pdf" target="_blank" rel="noopener">open full pdf</a>
-          <iframe class="reader-pdf" src="cv_7-30-2026.pdf" title="Noah CV"></iframe>
+          <a class="pdf-link" href="Noah_Lianez_Resume.pdf" target="_blank" rel="noopener">open full pdf</a>
+          <iframe class="reader-pdf" src="Noah_Lianez_Resume.pdf" title="Noah resume"></iframe>
         </div>
       `;
       return;
@@ -515,15 +568,57 @@
       e.body.map(p => `<p>${p}</p>`).join('');
     if (history.pushState) history.pushState(null, '', '#blog-' + id);
   }
+  function renderHobby(hKey){
+    const h = HOBBIES.find(x => x.key === hKey) || HOBBIES[0];
+    readerTitle.textContent = 'hobbies';
+    const tabs = '<div class="hobby-tabs" role="tablist">' + HOBBIES.map(x =>
+      `<button class="hobby-tab${x.key === h.key ? ' active' : ''}" role="tab" aria-selected="${x.key === h.key}" data-hobby="${x.key}">${x.name}</button>`
+    ).join('') + '</div>';
+    const list = h.posts.length
+      ? '<ul class="blog-list">' + h.posts.map(p =>
+          `<li><button class="blog-row" data-hobby="${h.key}" data-post="${p.id}"><span>${p.title}</span><span class="date">${p.date}</span></button></li>`
+        ).join('') + '</ul>'
+      : '<p class="hobby-empty">no posts yet. check back later!</p>';
+    readerBody.innerHTML = tabs + list;
+    if (history.pushState) history.pushState(null, '', '#hobbies-' + h.key);
+  }
+  function renderHobbyPost(hKey, pId){
+    const h = HOBBIES.find(x => x.key === hKey);
+    const p = h && h.posts.find(x => x.id === pId);
+    if (!p) return renderHobby(hKey);
+    readerTitle.textContent = p.title;
+    readerBody.innerHTML = `<button class="blog-back" data-hobby="${h.key}">&larr; back to ${h.name}</button>` +
+      `<p class="blog-date-line">${p.date}</p>` +
+      p.body.map(t => `<p>${t}</p>`).join('');
+    if (history.pushState) history.pushState(null, '', '#hobbies-' + h.key + '-' + p.id);
+  }
+  function routeHobbies(hash){
+    // hash looks like "hobbies", "hobbies-<key>" or "hobbies-<key>-<postId>"
+    const rest = hash.slice('hobbies'.length).replace(/^-/, '');
+    const h = HOBBIES.find(x => rest === x.key || rest.startsWith(x.key + '-'));
+    if (h && rest.length > h.key.length) renderHobbyPost(h.key, rest.slice(h.key.length + 1));
+    else renderHobby(h ? h.key : null);
+  }
+
   readerBody.addEventListener('click', (e) => {
+    const tab = e.target.closest('.hobby-tab');
+    if (tab){ renderHobby(tab.getAttribute('data-hobby')); return; }
     const row = e.target.closest('.blog-row');
-    if (row){ renderBlogEntry(row.getAttribute('data-id')); return; }
+    if (row){
+      if (row.dataset.hobby) renderHobbyPost(row.dataset.hobby, row.dataset.post);
+      else renderBlogEntry(row.getAttribute('data-id'));
+      return;
+    }
     const back = e.target.closest('.blog-back');
-    if (back){ renderBlogIndex(); }
+    if (back){
+      if (back.dataset.hobby) renderHobby(back.dataset.hobby);
+      else renderBlogIndex();
+    }
   });
 
   function openReader(key){
     if (key === 'blog') renderBlogIndex();
+    else if (key === 'hobbies') renderHobby(null);
     else if (SECTIONS[key]){ renderSection(key); if (history.pushState) history.pushState(null, '', '#' + key); }
     else return;
     reader.classList.add('open');
@@ -555,6 +650,9 @@
   } else if (initialHash === 'blog'){
     reader.classList.add('open');
     renderBlogIndex();
+  } else if (initialHash === 'hobbies' || initialHash.startsWith('hobbies-')){
+    reader.classList.add('open');
+    routeHobbies(initialHash);
   } else if (SECTIONS[initialHash]){
     reader.classList.add('open');
     renderSection(initialHash);
