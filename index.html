@@ -264,6 +264,12 @@
   }
   .reader-close:hover{ background: var(--ink); color: #fff; }
 
+  .math-sub{ font-family: 'Oswald', sans-serif; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; margin: 1.6rem 0 0.6rem; }
+  .reader-paper .code-block{
+    background: #1e1b18; color: #f3eee6; padding: 1rem; border-radius: 4px;
+    font-family: Consolas, 'Courier New', monospace; font-size: 0.82rem; line-height: 1.5;
+    max-height: 70vh; overflow: auto; white-space: pre;
+  }
   .blog-list{ list-style: none; border-top: 1px solid var(--line); }
   .blog-list li{ margin: 0; }
   .blog-row{
@@ -432,6 +438,12 @@
       <div class="label">hobbies</div>
     </a>
 
+    <a class="pin-card photo-card" href="#math" data-nav="math" tabindex="0" style="left:1530px; top:600px; transform:rotate(-3deg);">
+      <div class="pin"></div>
+      <div class="swatch">05</div>
+      <div class="label">math</div>
+    </a>
+
     <a class="pin-card photo-card" href="#about" data-nav="about" tabindex="0" style="left:730px; top:210px; transform:rotate(1deg);">
       <div class="pin"></div>
       <div class="swatch">00</div>
@@ -451,6 +463,17 @@
 </div>
 
 <script>
+  const MATH_ENTRIES = [
+    { id: 'm1', title: 'determinant tic-tac-toe (putnam 2002 a4)', date: '11/13/2026',
+      pdf: 'determinant_tic_tac_toe.pdf', code: 'det_tictactoe.py',
+      note: [
+        "this one started in my putnam seminar class. we were going over the 2002 putnam, and when i read a4, i came up with a different way to look at the problem. i treated each cell as a pair of sarrus diagonals and tracked a \"danger score\" that player 0 can always keep at 1 or below.",
+        "i was so excited that i'd found something new that i went home and wrote up the whole proof. then i wanted to be sure it actually held up, so i wrote a program that checks every possible line of play for player 1 and confirms player 0's strategy always ends with a determinant of 0.",
+        "to my knowledge, this solution hasn't been done before. if you've seen it somewhere, let me know!",
+        "- noah, 11/13/2026"
+      ] },
+  ];
+
   const SECTIONS = {
     resume: {
       title: 'resume',
@@ -568,6 +591,37 @@
       e.body.map(p => `<p>${p}</p>`).join('');
     if (history.pushState) history.pushState(null, '', '#blog-' + id);
   }
+  function renderMathIndex(){
+    readerTitle.textContent = 'math';
+    readerBody.innerHTML = '<ul class="blog-list">' + MATH_ENTRIES.map(e =>
+      `<li><button class="blog-row" data-math="${e.id}"><span>${e.title}</span><span class="date">${e.date}</span></button></li>`
+    ).join('') + '</ul>';
+    if (history.pushState) history.pushState(null, '', '#math');
+  }
+  function renderMathEntry(id){
+    const e = MATH_ENTRIES.find(x => x.id === id);
+    if (!e) return renderMathIndex();
+    readerTitle.textContent = e.title;
+    readerBody.innerHTML = '<button class="blog-back" data-math="1">&larr; back to math</button>' +
+      `<p class="blog-date-line">${e.date}</p>` +
+      (e.note || []).map(t => `<p>${t}</p>`).join('') +
+      `<h3 class="math-sub">the proof</h3>
+       <div class="pdf-shell">
+         <a class="pdf-link" href="${e.pdf}" target="_blank" rel="noopener">open full pdf</a>
+         <iframe class="reader-pdf" src="${e.pdf}" title="${e.title}"></iframe>
+       </div>` +
+      (e.code ? `<h3 class="math-sub">code that checks it</h3>
+       <div class="pdf-shell">
+         <a class="pdf-link" href="${e.code}" download>download ${e.code}</a>
+         <pre class="code-block" id="mathCode">loading…</pre>
+       </div>` : '');
+    if (e.code){
+      fetch(e.code).then(r => r.ok ? r.text() : Promise.reject())
+        .then(t => { const el = document.getElementById('mathCode'); if (el) el.textContent = t; })
+        .catch(() => { const el = document.getElementById('mathCode'); if (el) el.textContent = 'could not load code.'; });
+    }
+    if (history.pushState) history.pushState(null, '', '#math-' + id);
+  }
   function renderHobby(hKey){
     const h = HOBBIES.find(x => x.key === hKey) || HOBBIES[0];
     readerTitle.textContent = 'hobbies';
@@ -605,19 +659,22 @@
     if (tab){ renderHobby(tab.getAttribute('data-hobby')); return; }
     const row = e.target.closest('.blog-row');
     if (row){
-      if (row.dataset.hobby) renderHobbyPost(row.dataset.hobby, row.dataset.post);
+      if (row.dataset.math) renderMathEntry(row.dataset.math);
+      else if (row.dataset.hobby) renderHobbyPost(row.dataset.hobby, row.dataset.post);
       else renderBlogEntry(row.getAttribute('data-id'));
       return;
     }
     const back = e.target.closest('.blog-back');
     if (back){
-      if (back.dataset.hobby) renderHobby(back.dataset.hobby);
+      if (back.dataset.math) renderMathIndex();
+      else if (back.dataset.hobby) renderHobby(back.dataset.hobby);
       else renderBlogIndex();
     }
   });
 
   function openReader(key){
     if (key === 'blog') renderBlogIndex();
+    else if (key === 'math') renderMathIndex();
     else if (key === 'hobbies') renderHobby(null);
     else if (SECTIONS[key]){ renderSection(key); if (history.pushState) history.pushState(null, '', '#' + key); }
     else return;
@@ -647,6 +704,12 @@
   if (initialHash.startsWith('blog-')){
     reader.classList.add('open');
     renderBlogEntry(initialHash.replace('blog-', ''));
+  } else if (initialHash.startsWith('math-')){
+    reader.classList.add('open');
+    renderMathEntry(initialHash.replace('math-', ''));
+  } else if (initialHash === 'math'){
+    reader.classList.add('open');
+    renderMathIndex();
   } else if (initialHash === 'blog'){
     reader.classList.add('open');
     renderBlogIndex();
